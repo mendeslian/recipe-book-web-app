@@ -1,7 +1,13 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import RecipeCard from "../../components/RecipeCard";
+
+//services
 import { fetchRecipes } from "../../services/api";
+
+//components
+import RecipeCard from "../../components/RecipeCard";
+
+// types
 import { Recipe } from "../../types";
 
 const RecipeList = () => {
