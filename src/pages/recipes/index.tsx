@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { ChefHat, Search, Loader2 } from "lucide-react";
+import { ChefHat, Search, Loader2, X } from "lucide-react";
 
 //services
 import { fetchRecipes } from "../../services/api";
@@ -14,6 +14,7 @@ import { Recipe } from "../../types";
 const RecipeList = () => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [isMobile, setIsMobile] = useState<boolean>(false);
   const [filters, setFilters] = useState({
     ingredient: "",
     area: "",
@@ -22,6 +23,27 @@ const RecipeList = () => {
 
   const router = useRouter();
   const { ingredient, area, category } = router.query;
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  useEffect(() => {
+    if (router.isReady) {
+      setFilters({
+        ingredient: (ingredient as string) || "",
+        area: (area as string) || "",
+        category: (category as string) || "",
+      });
+    }
+  }, [router.isReady, ingredient, area, category]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -40,8 +62,10 @@ const RecipeList = () => {
       }
     };
 
-    fetchData();
-  }, [ingredient, area, category]);
+    if (router.isReady) {
+      fetchData();
+    }
+  }, [router.isReady, ingredient, area, category]);
 
   const handleInputChange = (e: any) => {
     setFilters((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -53,6 +77,15 @@ const RecipeList = () => {
     if (filters.area) query.area = filters.area;
     if (filters.category) query.category = filters.category;
     router.push({ pathname: "/recipes", query });
+  };
+
+  const handleClearFilters = () => {
+    setFilters({
+      ingredient: "",
+      area: "",
+      category: "",
+    });
+    router.push({ pathname: "/recipes" });
   };
 
   const getFilterInfo = () => {
@@ -81,40 +114,70 @@ const RecipeList = () => {
           )}
         </div>
 
-        {/* Filtros */}
-        <div className="bg-white p-4 rounded-lg shadow-md mb-8 flex gap-4">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <input
-              type="text"
-              name="ingredient"
-              placeholder="Ingredient"
-              className="border px-3 py-2 rounded-md"
-              value={filters.ingredient}
-              onChange={handleInputChange}
-            />
-            <input
-              type="text"
-              name="area"
-              placeholder="Country"
-              className="border px-3 py-2 rounded-md"
-              value={filters.area}
-              onChange={handleInputChange}
-            />
-            <input
-              type="text"
-              name="category"
-              placeholder="Category"
-              className="border px-3 py-2 rounded-md"
-              value={filters.category}
-              onChange={handleInputChange}
-            />
+        <div className="bg-white p-6 rounded-xl shadow-lg mb-8 max-w-4xl mx-auto">
+          <div className="flex flex-col items-center sm:flex-row gap-4 sm:items-end">
+            <div className="w-full flex-1 grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="flex flex-col">
+                <label className="text-sm font-medium text-neutral-700 mb-2">
+                  Ingredient
+                </label>
+                <input
+                  type="text"
+                  name="ingredient"
+                  placeholder="Chicken, Beef"
+                  className="border border-neutral-300 px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-colors"
+                  value={filters.ingredient}
+                  onChange={handleInputChange}
+                />
+              </div>
+              <div className="flex flex-col">
+                <label className="text-sm font-medium text-neutral-700 mb-2">
+                  Country
+                </label>
+                <input
+                  type="text"
+                  name="area"
+                  placeholder="Italian, Mexican"
+                  className="border border-neutral-300 px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-colors"
+                  value={filters.area}
+                  onChange={handleInputChange}
+                />
+              </div>
+              <div className="flex flex-col">
+                <label className="text-sm font-medium text-neutral-700 mb-2">
+                  Category
+                </label>
+                <input
+                  type="text"
+                  name="category"
+                  placeholder="Side, Seafood"
+                  className="border border-neutral-300 px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-colors"
+                  value={filters.category}
+                  onChange={handleInputChange}
+                />
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={handleFilterSubmit}
+                className={`flex items-center justify-center gap-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors duration-200 font-medium shadow-md hover:shadow-lg transform cursor-pointer ${
+                  isMobile ? "px-4 py-2.5" : "w-11 h-11"
+                }`}
+              >
+                {isMobile && "Search"}
+                <Search size={18} />
+              </button>
+              <button
+                onClick={handleClearFilters}
+                className={`flex items-center justify-center gap-2 bg-neutral-500 text-white rounded-lg hover:bg-neutral-600 transition-colors duration-200 font-medium shadow-md hover:shadow-lg cursor-pointer ${
+                  isMobile ? "px-4 py-2.5" : "w-11 h-11"
+                }`}
+              >
+                {isMobile && "Clear"}
+                <X size={18} />
+              </button>
+            </div>
           </div>
-          <button
-            onClick={handleFilterSubmit}
-            className="w-10 h-10 flex items-center justify-center sm:col-span-3 bg-orange-600 text-white py-2 rounded-md hover:bg-orange-700 transition cursor-pointer"
-          >
-            <Search />
-          </button>
         </div>
 
         {loading && (
