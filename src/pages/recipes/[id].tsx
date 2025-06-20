@@ -1,37 +1,44 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import axios from "axios";
 import Link from "next/link";
 import Image from "next/image";
+
+// services
+import { fetchRecipeById, fetchRecipes } from "../../services/api";
+
+// types
+import { Recipe } from "../../types";
 
 const RecipeInfo = () => {
   const router = useRouter();
   const { id } = router.query;
-  const [recipe, setRecipe] = useState<any>(null);
-  const [categoryRecipes, setCategoryRecipes] = useState<any[]>([]);
+  const [recipe, setRecipe] = useState<Recipe | null>(null);
+  const [categoryRecipes, setCategoryRecipes] = useState<Recipe[]>([]);
 
   useEffect(() => {
-    if (!id) return;
-    const fetchRecipe = async () => {
-      const res = await axios.get(`http://localhost:3001/recipes/${id}`);
-      setRecipe(res.data.meals ? res.data.meals[0] : null);
-      if (res.data.meals && res.data.meals[0].strCategory) {
-        const catRes = await axios.get("http://localhost:3001/recipes", {
-          params: { category: res.data.meals[0].strCategory },
+    if (!id || typeof id !== "string") return;
+
+    const loadRecipe = async () => {
+      const recipeData = await fetchRecipeById(id);
+      setRecipe(recipeData);
+
+      if (recipeData?.strCategory) {
+        const related = await fetchRecipes({
+          category: recipeData.strCategory,
         });
-        setCategoryRecipes(catRes.data.meals || []);
+        setCategoryRecipes(related);
       }
     };
-    fetchRecipe();
+
+    loadRecipe();
   }, [id]);
 
   if (!recipe) return <p>Loading...</p>;
 
-  // Get ingredients and measures
   const ingredients = [];
   for (let i = 1; i <= 20; i++) {
-    const ingredient = recipe[`strIngredient${i}`];
-    const measure = recipe[`strMeasure${i}`];
+    const ingredient = recipe[`strIngredient${i}` as keyof Recipe];
+    const measure = recipe[`strMeasure${i}` as keyof Recipe];
     if (ingredient) ingredients.push({ ingredient, measure });
   }
 
