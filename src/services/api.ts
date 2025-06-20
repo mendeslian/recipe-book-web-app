@@ -16,7 +16,7 @@ export const fetchRecipes = async (params?: {
     });
     return response.data.meals ?? [];
   } catch (error) {
-    console.error("Erro ao buscar receitas:", error);
+    console.error(error);
     return [];
   }
 };
@@ -28,7 +28,7 @@ export const fetchRecipeById = async (id: string): Promise<Recipe | null> => {
     );
     return response.data.meals?.[0] ?? null;
   } catch (error) {
-    console.error("Erro ao buscar receita por ID:", error);
+    console.error(error);
     return null;
   }
 };

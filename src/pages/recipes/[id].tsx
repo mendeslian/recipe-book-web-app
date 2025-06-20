@@ -2,6 +2,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Link from "next/link";
+import Image from "next/image";
 
 const RecipeInfo = () => {
   const router = useRouter();
@@ -37,10 +38,12 @@ const RecipeInfo = () => {
   return (
     <div className="p-4 flex flex-col md:flex-row gap-4">
       <div className="md:w-2/3">
-        <img
+        <Image
           src={recipe.strMealThumb}
           alt={recipe.strMeal}
-          className="rounded mb-4 max-w-md"
+          width={400}
+          height={160}
+          className="rounded object-cover"
         />
         <h1 className="text-3xl font-bold text-center">{recipe.strMeal}</h1>
         <div className="text-center mb-4">

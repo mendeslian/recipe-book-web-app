@@ -19,7 +19,7 @@ const RecipeList = () => {
         });
         setRecipes(data);
       } catch (error) {
-        console.error("Erro ao buscar receitas:", error);
+        console.error(error);
       }
     };
 
