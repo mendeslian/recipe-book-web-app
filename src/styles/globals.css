@@ -1,12 +1,15 @@
-/* src/styles/globals.css */
+@import "tailwindcss";
+
 * {
-  margin: 0;
-  padding: 0;
   box-sizing: border-box;
 }
 
 html,
 body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
   height: 100%;
   font-family: Inter, sans-serif;
+  background: linear-gradient(to bottom right, #fb923c, #ea580c);
 }

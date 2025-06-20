@@ -1,4 +1,8 @@
 export type Recipe = {
+  rating: number;
+  difficulty: string;
+  servings: string;
+  cookingTime: string;
   idMeal: string;
   strMeal: string;
   strMealAlternate: string | null;

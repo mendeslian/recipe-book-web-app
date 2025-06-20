@@ -43,7 +43,7 @@ const RecipeInfo = () => {
   }
 
   return (
-    <div className="p-4 flex flex-col md:flex-row gap-4">
+    <div className="p-8 flex flex-col md:flex-row gap-4">
       <div className="md:w-2/3">
         <h1 className="text-3xl font-bold text-center">{recipe.strMeal}</h1>
         <Image
