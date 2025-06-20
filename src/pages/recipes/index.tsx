@@ -57,7 +57,7 @@ const RecipeList = () => {
 
   const getFilterInfo = () => {
     if (ingredient) return `Ingredient: ${ingredient}`;
-    if (area) return `Area: ${area}`;
+    if (area) return `Country: ${area}`;
     if (category) return `Category: ${category}`;
     return "All recipes";
   };
@@ -95,7 +95,7 @@ const RecipeList = () => {
             <input
               type="text"
               name="area"
-              placeholder="Area"
+              placeholder="Country"
               className="border px-3 py-2 rounded-md"
               value={filters.area}
               onChange={handleInputChange}
