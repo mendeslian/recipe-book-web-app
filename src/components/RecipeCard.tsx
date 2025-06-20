@@ -14,6 +14,7 @@ const RecipeCard = ({ recipe }: RecipeCardProps) => {
       className="border p-4 rounded cursor-pointer hover:shadow-lg"
       onClick={() => router.push(`/recipes/${recipe.idMeal}`)}
     >
+      <h3 className="mt-2 font-bold text-lg">{recipe.strMeal}</h3>
       <Image
         src={recipe.strMealThumb}
         alt={recipe.strMeal}
@@ -21,7 +22,6 @@ const RecipeCard = ({ recipe }: RecipeCardProps) => {
         height={400}
         className="rounded object-cover"
       />
-      <h3 className="mt-2 font-bold text-lg">{recipe.strMeal}</h3>
     </div>
   );
 };
