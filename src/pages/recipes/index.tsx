@@ -14,6 +14,12 @@ import { Recipe } from "../../types";
 const RecipeList = () => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [filters, setFilters] = useState({
+    ingredient: "",
+    area: "",
+    category: "",
+  });
+
   const router = useRouter();
   const { ingredient, area, category } = router.query;
 
@@ -36,6 +42,18 @@ const RecipeList = () => {
 
     fetchData();
   }, [ingredient, area, category]);
+
+  const handleInputChange = (e: any) => {
+    setFilters((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleFilterSubmit = () => {
+    const query: any = {};
+    if (filters.ingredient) query.ingredient = filters.ingredient;
+    if (filters.area) query.area = filters.area;
+    if (filters.category) query.category = filters.category;
+    router.push({ pathname: "/recipes", query });
+  };
 
   const getFilterInfo = () => {
     if (ingredient) return `Ingredient: ${ingredient}`;
@@ -61,6 +79,42 @@ const RecipeList = () => {
               {recipes.length} recipe{recipes.length !== 1 ? "s" : ""} found
             </p>
           )}
+        </div>
+
+        {/* Filtros */}
+        <div className="bg-white p-4 rounded-lg shadow-md mb-8 flex gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <input
+              type="text"
+              name="ingredient"
+              placeholder="Ingredient"
+              className="border px-3 py-2 rounded-md"
+              value={filters.ingredient}
+              onChange={handleInputChange}
+            />
+            <input
+              type="text"
+              name="area"
+              placeholder="Area"
+              className="border px-3 py-2 rounded-md"
+              value={filters.area}
+              onChange={handleInputChange}
+            />
+            <input
+              type="text"
+              name="category"
+              placeholder="Category"
+              className="border px-3 py-2 rounded-md"
+              value={filters.category}
+              onChange={handleInputChange}
+            />
+          </div>
+          <button
+            onClick={handleFilterSubmit}
+            className="w-10 h-10 flex items-center justify-center sm:col-span-3 bg-orange-600 text-white py-2 rounded-md hover:bg-orange-700 transition cursor-pointer"
+          >
+            <Search />
+          </button>
         </div>
 
         {loading && (
