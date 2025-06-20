@@ -15,6 +15,7 @@ const RecipeList = () => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [isMobile, setIsMobile] = useState<boolean>(false);
+  const [isMounted, setIsMounted] = useState<boolean>(false);
   const [filters, setFilters] = useState({
     ingredient: "",
     area: "",
@@ -25,15 +26,20 @@ const RecipeList = () => {
   const { ingredient, area, category } = router.query;
 
   useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 640);
     };
 
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
+    if (isMounted) {
+      checkMobile();
+      window.addEventListener("resize", checkMobile);
+      return () => window.removeEventListener("resize", checkMobile);
+    }
+  }, [isMounted]);
 
   useEffect(() => {
     if (router.isReady) {
@@ -68,14 +74,26 @@ const RecipeList = () => {
   }, [router.isReady, ingredient, area, category]);
 
   const handleInputChange = (e: any) => {
-    setFilters((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    const { name, value } = e.target;
+
+    setFilters({
+      ingredient: name === "ingredient" ? value : "",
+      area: name === "area" ? value : "",
+      category: name === "category" ? value : "",
+    });
   };
 
   const handleFilterSubmit = () => {
     const query: any = {};
-    if (filters.ingredient) query.ingredient = filters.ingredient;
-    if (filters.area) query.area = filters.area;
-    if (filters.category) query.category = filters.category;
+
+    if (filters.ingredient) {
+      query.ingredient = filters.ingredient;
+    } else if (filters.area) {
+      query.area = filters.area;
+    } else if (filters.category) {
+      query.category = filters.category;
+    }
+
     router.push({ pathname: "/recipes", query });
   };
 
@@ -95,8 +113,27 @@ const RecipeList = () => {
     return "All recipes";
   };
 
+  if (!isMounted) {
+    return (
+      <div className="to-neutral-100">
+        <div className="container mx-auto px-4 py-8">
+          <div className="text-center mb-12">
+            <div className="flex items-center justify-center gap-3 mb-4">
+              <ChefHat className="text-orange-600" size={32} />
+              <h1 className="text-4xl font-bold text-neutral-800">
+                Recipes List
+              </h1>
+            </div>
+            <div className="w-20 h-1 bg-orange-500 mx-auto rounded-full mb-4"></div>
+            <p className="text-neutral-600 text-lg">Loading...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-neutral-50 to-neutral-100">
+    <div className="to-neutral-100">
       <div className="container mx-auto px-4 py-8">
         <div className="text-center mb-12">
           <div className="flex items-center justify-center gap-3 mb-4">
@@ -115,7 +152,7 @@ const RecipeList = () => {
         </div>
 
         <div className="bg-white p-6 rounded-xl shadow-lg mb-8 max-w-4xl mx-auto">
-          <div className="flex flex-col items-center sm:flex-row gap-4 sm:items-end">
+          <div className="flex flex-col items-center justify-center sm:flex-row gap-4 sm:items-end">
             <div className="w-full flex-1 grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="flex flex-col">
                 <label className="text-sm font-medium text-neutral-700 mb-2">
@@ -128,7 +165,13 @@ const RecipeList = () => {
                   className="border border-neutral-300 px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-colors"
                   value={filters.ingredient}
                   onChange={handleInputChange}
+                  disabled={filters.area !== "" || filters.category !== ""}
                 />
+                {(filters.area !== "" || filters.category !== "") && (
+                  <p className="text-xs text-neutral-400 mt-1">
+                    Clear other filters to use this field
+                  </p>
+                )}
               </div>
               <div className="flex flex-col">
                 <label className="text-sm font-medium text-neutral-700 mb-2">
@@ -141,7 +184,15 @@ const RecipeList = () => {
                   className="border border-neutral-300 px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-colors"
                   value={filters.area}
                   onChange={handleInputChange}
+                  disabled={
+                    filters.ingredient !== "" || filters.category !== ""
+                  }
                 />
+                {(filters.ingredient !== "" || filters.category !== "") && (
+                  <p className="text-xs text-neutral-400 mt-1">
+                    Clear other filters to use this field
+                  </p>
+                )}
               </div>
               <div className="flex flex-col">
                 <label className="text-sm font-medium text-neutral-700 mb-2">
@@ -154,10 +205,16 @@ const RecipeList = () => {
                   className="border border-neutral-300 px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-colors"
                   value={filters.category}
                   onChange={handleInputChange}
+                  disabled={filters.ingredient !== "" || filters.area !== ""}
                 />
+                {(filters.ingredient !== "" || filters.area !== "") && (
+                  <p className="text-xs text-neutral-400 mt-1">
+                    Clear other filters to use this field
+                  </p>
+                )}
               </div>
             </div>
-            <div className="flex gap-3">
+            <div className="flex items-center justify-center gap-3">
               <button
                 onClick={handleFilterSubmit}
                 className={`flex items-center justify-center gap-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors duration-200 font-medium shadow-md hover:shadow-lg transform cursor-pointer ${
