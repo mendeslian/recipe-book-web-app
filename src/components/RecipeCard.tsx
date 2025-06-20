@@ -1,7 +1,13 @@
 import { useRouter } from "next/router";
+import { Recipe } from "../types";
 
-const RecipeCard = ({ recipe }: { recipe: any }) => {
+interface RecipeCardProps {
+  recipe: Recipe;
+}
+
+const RecipeCard = ({ recipe }: RecipeCardProps) => {
   const router = useRouter();
+
   return (
     <div
       className="border p-4 rounded cursor-pointer hover:shadow-lg"

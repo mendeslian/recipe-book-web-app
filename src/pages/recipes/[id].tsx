@@ -44,9 +44,7 @@ const RecipeInfo = () => {
         />
         <h1 className="text-3xl font-bold text-center">{recipe.strMeal}</h1>
         <div className="text-center mb-4">
-          <Link href={`/recipes?area=${recipe.strArea}`}>
-            <a className="text-blue-600 underline">{recipe.strArea}</a>
-          </Link>
+          <Link href={`/recipes?area=${recipe.strArea}`}>{recipe.strArea}</Link>
         </div>
         <p className="mb-4">{recipe.strInstructions}</p>
 
@@ -55,7 +53,7 @@ const RecipeInfo = () => {
           {ingredients.map(({ ingredient, measure }, idx) => (
             <li key={idx}>
               <Link href={`/recipes?ingredient=${ingredient}`}>
-                <a className="text-green-700 underline">{ingredient}</a>
+                {ingredient}
               </Link>{" "}
               - {measure}
             </li>
@@ -70,9 +68,7 @@ const RecipeInfo = () => {
         <ul>
           {categoryRecipes.map((r) => (
             <li key={r.idMeal}>
-              <Link href={`/recipes/${r.idMeal}`}>
-                <a className="text-blue-600 underline">{r.strMeal}</a>
-              </Link>
+              <Link href={`/recipes/${r.idMeal}`}>{r.strMeal}</Link>
             </li>
           ))}
         </ul>
