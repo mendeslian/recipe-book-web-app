@@ -1,6 +1,8 @@
 import { useRouter } from "next/router";
-import { Recipe } from "../types";
 import Image from "next/image";
+
+// types
+import { Recipe } from "../types";
 
 interface RecipeCardProps {
   recipe: Recipe;
