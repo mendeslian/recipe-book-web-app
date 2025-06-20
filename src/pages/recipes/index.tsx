@@ -38,16 +38,15 @@ const RecipeList = () => {
   }, [ingredient, area, category]);
 
   const getFilterInfo = () => {
-    if (ingredient) return `Ingrediente: ${ingredient}`;
-    if (area) return `Região: ${area}`;
-    if (category) return `Categoria: ${category}`;
+    if (ingredient) return `Ingredient: ${ingredient}`;
+    if (area) return `Area: ${area}`;
+    if (category) return `Category: ${category}`;
     return "All recipes";
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-neutral-50 to-neutral-100">
       <div className="container mx-auto px-4 py-8">
-        {/* Header Section */}
         <div className="text-center mb-12">
           <div className="flex items-center justify-center gap-3 mb-4">
             <ChefHat className="text-orange-600" size={32} />
@@ -64,30 +63,27 @@ const RecipeList = () => {
           )}
         </div>
 
-        {/* Loading State */}
         {loading && (
           <div className="flex flex-col items-center justify-center py-20">
             <Loader2 className="animate-spin text-orange-600 mb-4" size={48} />
-            <p className="text-neutral-600 text-lg">Carregando receitas...</p>
+            <p className="text-neutral-600 text-lg">Loading recipes...</p>
           </div>
         )}
 
-        {/* Empty State */}
         {!loading && recipes.length === 0 && (
           <div className="text-center py-20">
             <Search className="text-neutral-400 mx-auto mb-4" size={64} />
             <h3 className="text-xl font-semibold text-neutral-700 mb-2">
-              Nenhuma receita encontrada
+              No recipes found
             </h3>
             <p className="text-neutral-500">
-              Tente buscar com outros filtros ou ingredientes.
+              Try searching with different filters or ingredients.
             </p>
           </div>
         )}
 
-        {/* Recipes Grid */}
         {!loading && recipes.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
             {recipes.map((recipe) => (
               <RecipeCard key={recipe.idMeal} recipe={recipe} />
             ))}
